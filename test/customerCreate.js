@@ -35,9 +35,16 @@ const createCustomersWithRoles = async () => {
       },
     ];
 
-    // Loop through customers and create them with associated roles
     for (const customerData of customersWithRoles) {
       const { firstName, lastName, email, password, roles } = customerData;
+
+      // Fetch role instances from the database
+      const foundRoles = await Role.findAll({
+        where: { RoleName: roles },
+      });
+
+      // Extract RoleIDs from foundRoles
+      const roleIds = foundRoles.map((role) => role.RoleID);
 
       // Hash the password
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -50,12 +57,8 @@ const createCustomersWithRoles = async () => {
         Password: hashedPassword,
       });
 
-      // Find roles associated with the customer and add them
-      const foundRoles = await Role.findAll({
-        where: { RoleName: roles },
-      });
-
-      await newCustomer.addRoles(foundRoles);
+      // Associate roles with the customer using their IDs
+      await newCustomer.addRoles(roleIds);
     }
 
     console.log("Customers with roles created successfully!");
@@ -64,5 +67,4 @@ const createCustomersWithRoles = async () => {
   }
 };
 
-// Call the function to create customers with roles
-createCustomersWithRoles();
+module.exports = createCustomersWithRoles;

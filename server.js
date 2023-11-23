@@ -16,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const db = require("./models");
+const createCustomersWithRoles = require("./test/customerCreate");
 db.sequelize
   .sync()
   .then(() => {
@@ -25,10 +26,7 @@ db.sequelize
     console.log("Failed to sync db: " + err.message);
   });
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
-});
+//createCustomersWithRoles();
 
 require("./routes/cars.routes")(app);
 require("./routes/auth.routes")(app);

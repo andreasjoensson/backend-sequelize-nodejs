@@ -34,10 +34,6 @@ module.exports = (sequelize, Sequelize) => {
         type: DataTypes.STRING, // Adjust the size based on your password hashing
         allowNull: false,
       },
-      Role: {
-        type: DataTypes.STRING, // Define role type based on your application's needs (e.g., 'user', 'admin', etc.)
-        defaultValue: "user", // Set a default role if needed
-      },
     },
     {
       tableName: "customers",
@@ -45,16 +41,11 @@ module.exports = (sequelize, Sequelize) => {
     }
   );
 
-  // Define the many-to-many association between Customer and Role
-  const Role = require("./role.model.js")(sequelize, DataTypes); // Assuming your Role model file is called 'Role.js'
+  const Role = require("./role.model.js")(sequelize, DataTypes); // Assuming your Role model file is called 'role.model.js'
 
   Customer.belongsToMany(Role, {
     through: "CustomerRoles",
     foreignKey: "CustomerID",
-  });
-  Role.belongsToMany(Customer, {
-    through: "CustomerRoles",
-    foreignKey: "RoleID",
   });
 
   return Customer;
