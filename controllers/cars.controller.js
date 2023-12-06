@@ -1,5 +1,4 @@
 const db = require("../models"); // Import your Sequelize models
-
 const Car = db.Car;
 
 // Create and Save a new Car
@@ -24,6 +23,7 @@ exports.create = (req, res) => {
       res.send(car);
     })
     .catch((err) => {
+      console.log("err", err);
       res.status(500).send({
         message: err.message || "Some error occurred while creating the Car.",
       });
@@ -112,11 +112,9 @@ exports.deleteAll = (req, res) => {
       res.send({ message: `${nums} Cars were deleted successfully!` });
     })
     .catch((err) => {
-      res
-        .status(500)
-        .send({
-          message: err.message || "Error occurred while removing all cars.",
-        });
+      res.status(500).send({
+        message: err.message || "Error occurred while removing all cars.",
+      });
     });
 };
 
@@ -127,12 +125,9 @@ exports.findAllPublished = (req, res) => {
       res.send(cars);
     })
     .catch((err) => {
-      res
-        .status(500)
-        .send({
-          message:
-            err.message ||
-            "Some error occurred while retrieving published cars.",
-        });
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving published cars.",
+      });
     });
 };

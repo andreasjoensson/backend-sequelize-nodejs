@@ -9,27 +9,57 @@ module.exports = (app) => {
   router.post(
     "/",
     authenticateToken,
-    checkRole(["Admin", "Manager"]),
+    checkRole(["DatabaseAdmin", "ApplicationUser"]),
     cars.create
   );
 
   // Retrieve all cars
-  router.get("/", cars.findAll);
+  router.get(
+    "/",
+    authenticateToken,
+    checkRole(["DatabaseAdmin", "ReadOnlyUser", "ApplicationUser"]),
+    cars.findAll
+  );
 
   // Retrieve all published cars
-  router.get("/published", cars.findAllPublished);
+  router.get(
+    "/published",
+    authenticateToken,
+    checkRole(["DatabaseAdmin", "ReadOnlyUser", "ApplicationUser"]),
+    cars.findAllPublished
+  );
 
   // Retrieve a single Tutorial with id
-  router.get("/:id", cars.findOne);
+  router.get(
+    "/:id",
+    authenticateToken,
+    checkRole(["DatabaseAdmin", "ReadOnlyUser", "ApplicationUser"]),
+    cars.findOne
+  );
 
   // Update a Tutorial with id
-  router.put("/:id", cars.update);
+  router.put(
+    "/:id",
+    authenticateToken,
+    checkRole(["DatabaseAdmin", "ApplicationUser"]),
+    cars.update
+  );
 
   // Delete a Tutorial with id
-  router.delete("/:id", cars.delete);
+  router.delete(
+    "/:id",
+    authenticateToken,
+    checkRole(["DatabaseAdmin", "ApplicationUser"]),
+    cars.delete
+  );
 
   // Delete all cars
-  router.delete("/", cars.deleteAll);
+  router.delete(
+    "/",
+    authenticateToken,
+    checkRole(["DatabaseAdmin", "ApplicationUser"]),
+    cars.deleteAll
+  );
 
   app.use("/api/cars", router);
 };
