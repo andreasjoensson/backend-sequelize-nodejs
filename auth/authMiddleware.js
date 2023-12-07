@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const db = require("../models"); // Import your Sequelize models
+const db = require("../models/sequelize"); // Import your Sequelize models
 const Customer = db.Customer;
 const Role = db.Role;
 

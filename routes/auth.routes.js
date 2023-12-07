@@ -1,4 +1,4 @@
-const db = require("../models"); // Import your Sequelize models
+const db = require("../models/sequelize"); // Import your Sequelize models
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Customer = db.Customer;

@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { Customer, Role } = require("../models"); // Assuming your models are imported correctly
+const { Customer, Role } = require("../models/sequelize"); // Assuming your models are imported correctly
 
 const createCustomersWithRoles = async () => {
   try {

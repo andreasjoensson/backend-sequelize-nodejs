@@ -1,4 +1,4 @@
-const db = require("../models"); // Import your Sequelize models
+const db = require("../models/sequelize"); // Import your Sequelize models
 
 const Customer = db.Customer;
 
@@ -121,12 +121,9 @@ exports.deleteAll = (req, res) => {
       res.send({ message: `${nums} Customers were deleted successfully!` });
     })
     .catch((err) => {
-      res
-        .status(500)
-        .send({
-          message:
-            err.message || "Error occurred while removing all customers.",
-        });
+      res.status(500).send({
+        message: err.message || "Error occurred while removing all customers.",
+      });
     });
 };
 
@@ -137,12 +134,10 @@ exports.findAllPublished = (req, res) => {
       res.send(customers);
     })
     .catch((err) => {
-      res
-        .status(500)
-        .send({
-          message:
-            err.message ||
-            "Some error occurred while retrieving published customers.",
-        });
+      res.status(500).send({
+        message:
+          err.message ||
+          "Some error occurred while retrieving published customers.",
+      });
     });
 };

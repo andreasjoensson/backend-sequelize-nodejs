@@ -1,9 +1,16 @@
-const db = require("../models"); // Import your Sequelize models
-const Car = db.Car;
+const {
+  createCarSQ,
+  getAllCarsSQ,
+  findCarSQ,
+  updateCarSQ,
+  deleteCarSQ,
+  deleteAllCarsSQ,
+  findAllPublishedCarsSQ,
+} = require("../services/sequelize/car.service");
 
 // Create and Save a new Car
 exports.create = (req, res) => {
-  const { Make, Model, Year, RentalRate } = req.body;
+  const { Make, Model, Year, RentalRate, selectedDatabase } = req.body;
 
   // Validate request
   if (!Make || !Model || !Year || !RentalRate) {
@@ -12,122 +19,120 @@ exports.create = (req, res) => {
       .send({ message: "Required fields cannot be empty!" });
   }
 
-  // Create a Car
-  Car.create({
-    Make,
-    Model,
-    Year,
-    RentalRate,
-  })
-    .then((car) => {
-      res.send(car);
-    })
-    .catch((err) => {
-      console.log("err", err);
-      res.status(500).send({
-        message: err.message || "Some error occurred while creating the Car.",
-      });
-    });
+  switch (selectedDatabase) {
+    case "mongodb":
+      break;
+    case "sequelize":
+      return createCarSQ(req.body);
+    case "neo4j":
+      break;
+    default:
+      // Handle default case
+      break;
+  }
 };
 
 // Retrieve all Cars from the database
 exports.findAll = (req, res) => {
-  Car.findAll()
-    .then((cars) => {
-      res.send(cars);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occurred while retrieving cars.",
-      });
-    });
+  const { selectedDatabase } = req.body;
+
+  switch (selectedDatabase) {
+    case "mongodb":
+      break;
+    case "sequelize":
+      return getAllCarsSQ();
+    case "neo4j":
+      break;
+    default:
+      // Handle default case
+      break;
+  }
 };
 
 // Find a single Car by ID
 exports.findOne = (req, res) => {
   const id = req.params.id;
+  const { selectedDatabase } = req.body;
 
-  Car.findByPk(id)
-    .then((car) => {
-      if (!car) {
-        res.status(404).send({ message: `Car with id ${id} not found.` });
-      } else {
-        res.send(car);
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({ message: `Error retrieving car with id ${id}` });
-    });
+  switch (selectedDatabase) {
+    case "mongodb":
+      break;
+    case "sequelize":
+      return findCarSQ(id);
+    case "neo4j":
+      break;
+    default:
+      // Handle default case
+      break;
+  }
 };
 
 // Update a Car by ID
 exports.update = (req, res) => {
   const id = req.params.id;
+  const { selectedDatabase } = req.body;
 
-  Car.update(req.body, {
-    where: { CarID: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({ message: "Car was updated successfully." });
-      } else {
-        res.send({
-          message: `Cannot update Car with id=${id}. Car may not exist or request body is empty!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({ message: `Error updating Car with id ${id}` });
-    });
+  switch (selectedDatabase) {
+    case "mongodb":
+      break;
+    case "sequelize":
+      return updateCarSQ(id, req.body);
+    case "neo4j":
+      break;
+    default:
+      // Handle default case
+      break;
+  }
 };
 
 // Delete a Car by ID
 exports.delete = (req, res) => {
   const id = req.params.id;
+  const { selectedDatabase } = req.body;
 
-  Car.destroy({
-    where: { CarID: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({ message: "Car was deleted successfully!" });
-      } else {
-        res.send({
-          message: `Cannot delete Car with id=${id}. Car may not exist!`,
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(500).send({ message: `Error deleting Car with id ${id}` });
-    });
+  switch (selectedDatabase) {
+    case "mongodb":
+      break;
+    case "sequelize":
+      return deleteCarSQ(id);
+    case "neo4j":
+      break;
+    default:
+      // Handle default case
+      break;
+  }
 };
 
 // Delete all Cars from the database
 exports.deleteAll = (req, res) => {
-  Car.destroy({
-    where: {},
-    truncate: false,
-  })
-    .then((nums) => {
-      res.send({ message: `${nums} Cars were deleted successfully!` });
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error occurred while removing all cars.",
-      });
-    });
+  const { selectedDatabase } = req.body;
+
+  switch (selectedDatabase) {
+    case "mongodb":
+      break;
+    case "sequelize":
+      return deleteAllCarsSQ(id);
+    case "neo4j":
+      break;
+    default:
+      // Handle default case
+      break;
+  }
 };
 
 // Find all published Cars
 exports.findAllPublished = (req, res) => {
-  Car.findAll({ where: { published: true } })
-    .then((cars) => {
-      res.send(cars);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving published cars.",
-      });
-    });
+  const { selectedDatabase } = req.body;
+
+  switch (selectedDatabase) {
+    case "mongodb":
+      break;
+    case "sequelize":
+      return findAllPublishedCarsSQ(id);
+    case "neo4j":
+      break;
+    default:
+      // Handle default case
+      break;
+  }
 };
