@@ -1,4 +1,13 @@
 const {
+  createCarMG,
+  getAllCarsMG,
+  findCarMG,
+  updateCarMG,
+  deleteCarMG,
+  deleteAllCarsMG,
+  findAllPublishedCarsMG,
+} = require("../services/mongodb/car.service");
+const {
   createCarSQ,
   getAllCarsSQ,
   findCarSQ,
@@ -21,7 +30,7 @@ exports.create = (req, res) => {
 
   switch (selectedDatabase) {
     case "mongodb":
-      break;
+      return createCarMG(req.body);
     case "sequelize":
       return createCarSQ(req.body);
     case "neo4j":
@@ -38,7 +47,7 @@ exports.findAll = (req, res) => {
 
   switch (selectedDatabase) {
     case "mongodb":
-      break;
+      return getAllCarsMG();
     case "sequelize":
       return getAllCarsSQ();
     case "neo4j":
@@ -56,7 +65,7 @@ exports.findOne = (req, res) => {
 
   switch (selectedDatabase) {
     case "mongodb":
-      break;
+      return findCarMG(id);
     case "sequelize":
       return findCarSQ(id);
     case "neo4j":
@@ -74,7 +83,7 @@ exports.update = (req, res) => {
 
   switch (selectedDatabase) {
     case "mongodb":
-      break;
+      return updateCarMG(id, req.body);
     case "sequelize":
       return updateCarSQ(id, req.body);
     case "neo4j":
@@ -92,7 +101,7 @@ exports.delete = (req, res) => {
 
   switch (selectedDatabase) {
     case "mongodb":
-      break;
+      return deleteCarMG(id);
     case "sequelize":
       return deleteCarSQ(id);
     case "neo4j":
@@ -109,9 +118,9 @@ exports.deleteAll = (req, res) => {
 
   switch (selectedDatabase) {
     case "mongodb":
-      break;
+      return deleteAllCarsMG();
     case "sequelize":
-      return deleteAllCarsSQ(id);
+      return deleteAllCarsSQ();
     case "neo4j":
       break;
     default:
@@ -126,9 +135,9 @@ exports.findAllPublished = (req, res) => {
 
   switch (selectedDatabase) {
     case "mongodb":
-      break;
+      return findAllPublishedCarsMG();
     case "sequelize":
-      return findAllPublishedCarsSQ(id);
+      return findAllPublishedCarsSQ();
     case "neo4j":
       break;
     default:
