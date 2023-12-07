@@ -6,7 +6,7 @@ exports.create = (req, res) => {
   const { RentalDate, ReturnDate, CarID, CustomerID, LocationID } = req.body;
 
   // Validate request
-  if (!Make || !Model || !Year || !RentalRate) {
+  if (!RentalDate || !ReturnDate || !CarID || !CustomerID || !LocationID) {
     return res
       .status(400)
       .send({ message: "Required fields cannot be empty!" });

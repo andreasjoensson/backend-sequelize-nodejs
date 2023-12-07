@@ -31,6 +31,7 @@ db.sequelize
 require("./routes/cars.routes")(app);
 require("./routes/auth.routes")(app);
 require("./routes/rental.routes")(app);
+require("./routes/location.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
