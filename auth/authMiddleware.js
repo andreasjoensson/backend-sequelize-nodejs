@@ -11,10 +11,9 @@ const checkRole = (roles) => {
     const selectedDatabase = req.headers["database-type"];
     let userRoles = req.user.roles;
 
-    console.log("userRoles", userRoles);
     switch (selectedDatabase) {
       case "sequelize":
-        userRoles = userRoles.map((role) => role.RoleName);
+        userRoles = req.user.Roles.map((role) => role.RoleName);
         break;
       case "neo4j":
         userRoles = userRoles.map((role) => role);
