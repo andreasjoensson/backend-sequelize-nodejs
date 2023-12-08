@@ -14,6 +14,7 @@ const {
   updateCarNeo4j,
   deleteCarNeo4j,
   findAllPublishedCarsNeo4j,
+  deleteAllCarsNeo4j,
 } = require("../services/neo4j/car.service");
 const {
   createCarSQ,
@@ -200,7 +201,7 @@ exports.deleteAll = async (req, res) => {
         result = await deleteAllCarsSQ();
         break;
       case "neo4j":
-        // Neo4j delete all cars function
+        result = await deleteAllCarsNeo4j();
         break;
       default:
         // Handle default case

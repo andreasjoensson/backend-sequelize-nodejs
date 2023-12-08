@@ -35,6 +35,13 @@ const customerSchema = new mongoose.Schema(
   {
     collection: "customers", // Specify the collection name
     timestamps: false, // Disable timestamps (createdAt, updatedAt)
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        ret.CustomerID = ret._id; // Map _id to CarID
+        delete ret._id; // Remove _id from the response
+      },
+    },
   }
 );
 

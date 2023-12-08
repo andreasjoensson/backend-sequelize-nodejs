@@ -1,6 +1,6 @@
-const Location = require("../models/Location"); // Import your Mongoose Location model
+const Location = require("../../models/mongodb/location.model"); // Import your Mongoose Location model
 
-exports.createLocation = async (locationData) => {
+exports.createLocationMG = async (locationData) => {
   try {
     const newLocation = await Location.create(locationData);
     return newLocation;
@@ -9,7 +9,7 @@ exports.createLocation = async (locationData) => {
   }
 };
 
-exports.getAllLocations = async () => {
+exports.getAllLocationsMG = async () => {
   try {
     const allLocations = await Location.find();
     return allLocations;
@@ -18,7 +18,7 @@ exports.getAllLocations = async () => {
   }
 };
 
-exports.findLocation = async (id) => {
+exports.findLocationMG = async (id) => {
   try {
     const location = await Location.findById(id);
     if (!location) {
@@ -32,7 +32,7 @@ exports.findLocation = async (id) => {
   }
 };
 
-exports.updateLocation = async (id, locationData) => {
+exports.updateLocationMG = async (id, locationData) => {
   try {
     const updatedLocation = await Location.findByIdAndUpdate(id, locationData, {
       new: true,
@@ -48,7 +48,7 @@ exports.updateLocation = async (id, locationData) => {
   }
 };
 
-exports.deleteLocation = async (id) => {
+exports.deleteLocationMG = async (id) => {
   try {
     const deletedLocation = await Location.findByIdAndDelete(id);
     if (!deletedLocation) {
@@ -62,7 +62,7 @@ exports.deleteLocation = async (id) => {
   }
 };
 
-exports.deleteAllLocations = async () => {
+exports.deleteAllLocationsMG = async () => {
   try {
     const deletedCount = await Location.deleteMany({});
     return {
@@ -75,7 +75,7 @@ exports.deleteAllLocations = async () => {
   }
 };
 
-exports.findAllPublishedLocations = async () => {
+exports.findAllPublishedLocationsMG = async () => {
   try {
     const locations = await Location.find({ published: true });
     return locations;

@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const db = require("../models/sequelize"); // Import your Sequelize models
 const { initializeNeo4jDriver } = require("../config/neo4j.config");
+const MongoCustomer = require("../models/mongodb/customer.model");
 const Customer = db.Customer;
 const Role = db.Role;
 
@@ -9,6 +10,7 @@ const checkRole = (roles) => {
     const selectedDatabase = req.headers["database-type"];
     let userRoles = req.user.roles;
 
+    console.log("userRoles", userRoles);
     switch (selectedDatabase) {
       case "sequelize":
         userRoles = userRoles.map((role) => role.RoleName);
@@ -17,7 +19,7 @@ const checkRole = (roles) => {
         userRoles = userRoles.map((role) => role);
         break;
       case "mongodb":
-        userRoles = userRoles.map((role) => role.RoleName);
+        userRoles = userRoles.map((role) => role);
         break;
       default:
         // Handle default case
@@ -90,39 +92,24 @@ const authenticateTokenNeo4j = async (decoded) => {
     return { ...userData, roles };
   } catch (err) {
     console.error(err);
-    return res.sendStatus(403); // Forbidden if token is invalid or user not found
+    return err; // Forbidden if token is invalid or user not found
   }
 };
 
-const authenticateTokenMongo = async () => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (token == null) {
-    return res.sendStatus(401); // Unauthorized if no token provided
-  }
-
+const authenticateTokenMongo = async (decoded) => {
   try {
-    const decoded = jwt.verify(token, "your-secret-key");
-
     // Fetch user details including roles based on the decoded token
-    const user = await Customer.findOne({
-      CustomerID: decoded.CustomerID,
+    const user = await MongoCustomer.findOne({
+      _id: decoded.CustomerID,
     }).populate("roles");
 
-    if (!user) {
-      return res.sendStatus(401); // Unauthorized if user not found
-    }
-
     // Attach user information to the request object
-    return { ...user._doc, roles: user.roles.map((role) => role.RoleName) };
+    return { ...user._doc, roles: user.roles.map((role) => role.roleName) };
   } catch (err) {
     console.error(err);
-    return res.sendStatus(403); // Forbidden if token is invalid or user not found
+    return err; // Forbidden if token is invalid or user not found
   }
 };
-
-module.exports = { authenticateTokenMongo };
 
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -138,6 +125,7 @@ const authenticateToken = async (req, res, next) => {
     const decoded = jwt.verify(token, "your-secret-key"); // Verify and decode the token using your secret key
 
     let user;
+    console.log("selectedDatabase", selectedDatabase);
     switch (selectedDatabase) {
       case "sequelize":
         user = await authenticateTokenSQ(decoded);

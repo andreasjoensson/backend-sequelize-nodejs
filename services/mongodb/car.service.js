@@ -12,6 +12,7 @@ exports.createCarMG = async (carData) => {
 exports.getAllCarsMG = async () => {
   try {
     const allCars = await Car.find();
+    console.log("allCars", allCars);
     return allCars;
   } catch (error) {
     throw new Error(`Error retrieving cars: ${error.message}`);

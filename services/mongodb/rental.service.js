@@ -1,26 +1,49 @@
 const Rental = require("../../models/mongodb/rental.model");
+const mongoose = require("mongoose");
 
-exports.createRental = async (rentalData) => {
+exports.createRentalMG = async (rentalData) => {
   try {
-    const newRental = await Rental.create(rentalData);
-    return newRental;
+    const { CarID, CustomerID, LocationID, RentalDate, ReturnDate } =
+      rentalData;
+
+    // Convert string IDs to mongoose ObjectId
+    const validCarID = new mongoose.Types.ObjectId(CarID);
+    const validCustomerID = new mongoose.Types.ObjectId(CustomerID);
+    const validLocationID = new mongoose.Types.ObjectId(LocationID);
+
+    // Create a new Rental instance
+    const newRental = new Rental({
+      Car: validCarID,
+      Customer: validCustomerID,
+      Location: validLocationID,
+      RentalDate: RentalDate,
+      ReturnDate: ReturnDate,
+    });
+
+    // Save the new Rental
+    const savedRental = await newRental.save();
+    return savedRental;
   } catch (error) {
     throw new Error(`Error creating Rental: ${error.message}`);
   }
 };
 
-exports.getAllRentals = async () => {
+exports.getAllRentalsMG = async () => {
   try {
-    const allRentals = await Rental.find();
+    const allRentals = await Rental.find()
+      .populate("Car", "CarID") // Populating CarID from the Car collection
+      .populate("Customer", "CustomerID"); // Populating CustomerID from the Customer collection
     return allRentals;
   } catch (error) {
     throw new Error(`Error retrieving Rentals: ${error.message}`);
   }
 };
 
-exports.findRental = async (id) => {
+exports.findRentalMG = async (id) => {
   try {
-    const rental = await Rental.findById(id);
+    const rental = await Rental.findById(id)
+      .populate("Car", "CarID") // Populating CarID from the Car collection
+      .populate("Customer", "CustomerID"); // Populating CustomerID from the Customer collection
     if (!rental) {
       throw new Error(`Rental with id ${id} not found.`);
     }
@@ -30,7 +53,7 @@ exports.findRental = async (id) => {
   }
 };
 
-exports.updateRental = async (id, rentalData) => {
+exports.updateRentalMG = async (id, rentalData) => {
   try {
     const updatedRental = await Rental.findByIdAndUpdate(id, rentalData, {
       new: true,
@@ -46,8 +69,9 @@ exports.updateRental = async (id, rentalData) => {
   }
 };
 
-exports.deleteRental = async (id) => {
+exports.deleteRentalMG = async (id) => {
   try {
+    console.log("id", id);
     const deletedRental = await Rental.findByIdAndDelete(id);
     if (!deletedRental) {
       throw new Error(
@@ -60,7 +84,7 @@ exports.deleteRental = async (id) => {
   }
 };
 
-exports.deleteAllRentals = async () => {
+exports.deleteAllRentalsMG = async () => {
   try {
     const deletedCount = await Rental.deleteMany({});
     return {
@@ -73,7 +97,7 @@ exports.deleteAllRentals = async () => {
   }
 };
 
-exports.findAllPublishedRentals = async () => {
+exports.findAllPublishedRentalsMG = async () => {
   try {
     const rentals = await Rental.find({ published: true });
     return rentals;

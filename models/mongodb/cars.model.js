@@ -2,26 +2,33 @@ const mongoose = require("mongoose");
 
 const carSchema = new mongoose.Schema(
   {
-    make: {
+    Make: {
       type: String,
       required: true,
     },
-    model: {
+    Model: {
       type: String,
       required: true,
     },
-    year: {
+    Year: {
       type: Number,
       required: true,
     },
-    rentalRate: {
+    RentalRate: {
       type: Number,
       required: true,
     },
   },
   {
     collection: "cars", // Specify the collection name
-    timestamps: false, // Disable timestamps (createdAt, updatedAt)
+    timestamps: false, // Disable timestamps (createdAt, updatedAt
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        ret.CarID = ret._id; // Map _id to CarID
+        delete ret._id; // Remove _id from the response
+      },
+    },
   }
 );
 

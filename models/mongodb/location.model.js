@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const locationSchema = new mongoose.Schema(
   {
-    name: {
+    Name: {
       type: String,
       required: true,
     },
-    address: {
+    Address: {
       type: String,
       required: true,
     },
@@ -14,6 +14,13 @@ const locationSchema = new mongoose.Schema(
   {
     collection: "locations", // Specify the collection name
     timestamps: false, // Disable timestamps (createdAt, updatedAt)
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        ret.LocationID = ret._id; // Map _id to CarID
+        delete ret._id; // Remove _id from the response
+      },
+    },
   }
 );
 

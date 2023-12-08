@@ -2,22 +2,22 @@ const mongoose = require("mongoose");
 
 const rentalSchema = new mongoose.Schema(
   {
-    rentalDate: {
+    RentalDate: {
       type: Date,
       required: true,
     },
-    returnDate: {
+    ReturnDate: {
       type: Date,
     },
-    car: {
+    Car: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Car",
     },
-    customer: {
+    Customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
     },
-    location: {
+    Location: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Location",
     },
@@ -25,6 +25,17 @@ const rentalSchema = new mongoose.Schema(
   {
     collection: "rentals", // Specify the collection name
     timestamps: false, // Disable timestamps (createdAt, updatedAt)
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        console.log("ret", ret);
+        ret.RentalID = ret._id; // Map _id to CarID
+        ret.CarID = ret.Car._id;
+        ret.CustomerID = ret.Customer.id;
+        ret.LocationID = ret.Location._id;
+        delete ret._id; // Remove _id from the response
+      },
+    },
   }
 );
 
