@@ -1,4 +1,4 @@
-const db = require("../models"); // Import your Sequelize models
+const db = require("../../models/sequelize"); // Import your Sequelize models
 const Rental = db.Rental;
 
 exports.createRentalSQ = async (RentalData) => {

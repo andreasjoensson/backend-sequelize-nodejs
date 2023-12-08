@@ -19,10 +19,10 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.Car = require("../models/cars.model.js")(sequelize, Sequelize);
-db.Customer = require("../models/customers.model.js")(sequelize, Sequelize);
-db.Location = require("../models/locations.model.js")(sequelize, Sequelize);
-db.Rental = require("../models/rentals.model.js")(sequelize, Sequelize);
-db.Role = require("../models/role.model.js")(sequelize, Sequelize);
+db.Car = require("./cars.model.js")(sequelize, Sequelize);
+db.Customer = require("./customers.model.js")(sequelize, Sequelize);
+db.Location = require("./locations.model.js")(sequelize, Sequelize);
+db.Rental = require("./rentals.model.js")(sequelize, Sequelize);
+db.Role = require("./role.model.js")(sequelize, Sequelize);
 
 module.exports = db;

@@ -25,6 +25,12 @@ const customerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    roles: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Role", // Reference to the Role model
+      },
+    ],
   },
   {
     collection: "customers", // Specify the collection name

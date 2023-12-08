@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { connect } = require("./config/mongodb.config");
 
 const app = express();
 
@@ -16,7 +17,40 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const db = require("./models/sequelize");
-const createCustomersWithRoles = require("./test/customerCreate");
+const createCustomersMongoDB = require("./test/customerCreateMG");
+const customersWithRoles = [
+  {
+    firstName: "App",
+    lastName: "User",
+    email: "appuser@example.com",
+    password: "password123", // Plain password (it will be hashed in the function)
+    roles: ["ApplicationUser"],
+  },
+  {
+    firstName: "DB",
+    lastName: "Admin",
+    email: "dbadmin@example.com",
+    password: "password123",
+    roles: ["DatabaseAdmin"],
+  },
+  {
+    firstName: "Read",
+    lastName: "Only",
+    email: "readonly@example.com",
+    password: "password123",
+    roles: ["ReadOnlyUser"],
+  },
+  {
+    firstName: "Restricted",
+    lastName: "User",
+    email: "restricted@example.com",
+    password: "password123",
+    roles: ["RestrictedUser"],
+  },
+];
+
+connect();
+
 db.sequelize
   .sync()
   .then(() => {

@@ -1,21 +1,14 @@
 require("dotenv").config();
+const mongoose = require("mongoose");
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = process.env.MONGODB_URI;
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
-
-export const connect = async () => {
+async function connect() {
   try {
-    await client.connect();
-    console.log("Connected successfully to MongoDB server");
-  } catch (error) {
-    console.error(error);
+    await mongoose.connect(uri);
+    console.log("connected to MongoDB");
+  } catch {
+    console.log(error);
   }
-};
+}
+
+exports.connect = connect;

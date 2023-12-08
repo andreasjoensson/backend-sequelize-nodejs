@@ -1,3 +1,4 @@
+const { createRentalNJ } = require("../services/neo4j/rental.service");
 const {
   createRentalSQ,
   getAllRentalsSQ,
@@ -18,7 +19,7 @@ exports.create = (req, res) => {
     case "sequelize":
       return createRentalSQ(req.body);
     case "neo4j":
-      break;
+      return createRentalNJ(req.body);
     default:
       // Handle default case
       break;
