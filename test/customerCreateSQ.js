@@ -6,10 +6,15 @@ const createCustomersWithRoles = async (customersWithRoles) => {
     for (const customerData of customersWithRoles) {
       const { firstName, lastName, email, password, roles } = customerData;
 
-      // Fetch role instances from the database
-      const foundRoles = await Role.findAll({
-        where: { RoleName: roles },
-      });
+      // Fetch or create role instances
+      const foundRoles = await Promise.all(
+        roles.map(async (roleName) => {
+          const [role, created] = await Role.findOrCreate({
+            where: { RoleName: roleName },
+          });
+          return role;
+        })
+      );
 
       // Extract RoleIDs from foundRoles
       const roleIds = foundRoles.map((role) => role.RoleID);
