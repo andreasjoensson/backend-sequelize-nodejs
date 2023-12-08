@@ -19,7 +19,7 @@ const checkRole = (roles) => {
         userRoles = userRoles.map((role) => role);
         break;
       case "mongodb":
-        userRoles = userRoles.map((role) => role);
+        userRoles = userRoles.map((role) => role.RoleName);
         break;
       default:
         // Handle default case
@@ -101,10 +101,18 @@ const authenticateTokenMongo = async (decoded) => {
     // Fetch user details including roles based on the decoded token
     const user = await MongoCustomer.findOne({
       _id: decoded.CustomerID,
-    }).populate("roles");
+    });
+
+    const roles = user.roles;
+    const userRoles = [];
+
+    for (const role of roles) {
+      const foundRole = await Role.findOne({ _id: role });
+      userRoles.push(foundRole.get({ plain: true }));
+    }
 
     // Attach user information to the request object
-    return { ...user._doc, roles: user.roles.map((role) => role.roleName) };
+    return { ...user._doc, roles: userRoles };
   } catch (err) {
     console.error(err);
     return err; // Forbidden if token is invalid or user not found
