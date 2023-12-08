@@ -4,10 +4,22 @@ const { connect } = require("./config/mongodb.config");
 
 const app = express();
 
-var corsOptions = {
-  origin: "http://localhost:3000",
-};
+// Define CORS options
+let corsOptions = {};
 
+if (process.env.NODE_ENV === "production") {
+  // Use a different CORS URL in production
+  corsOptions = {
+    origin: "https://www.bilopedia.dk", // Replace with your production URL
+  };
+} else {
+  // Default CORS URL for development
+  corsOptions = {
+    origin: "http://localhost:3000", // Your development URL
+  };
+}
+
+// Use CORS middleware with the defined options
 app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
