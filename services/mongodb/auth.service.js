@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Customer = require("../../models/mongodb/customer.model");
+require("dotenv").config();
 
 const loginMongo = async (email, password) => {
   try {
@@ -25,7 +26,7 @@ const loginMongo = async (email, password) => {
         Email: customer.email, // Modify based on your schema
         // Add other necessary fields for the token
       },
-      "your-secret-key", // Replace with your secret key for token generation
+      process.env.JWT_SECRET, // Replace with your secret key for token generation
       { expiresIn: "1h" } // Set token expiration time
     );
 

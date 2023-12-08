@@ -2,6 +2,7 @@ const models = require("../../models/sequelize"); // Import your Sequelize model
 const Customer = models.Customer;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const loginSQ = async (email, password) => {
   try {
@@ -26,7 +27,7 @@ const loginSQ = async (email, password) => {
         Email: customer.Email,
         Role: customer.Role,
       },
-      "your-secret-key", // Replace with your secret key for token generation
+      process.env.JWT_SECRET, // Replace with your secret key for token generation
       { expiresIn: "1h" } // Set token expiration time
     );
 

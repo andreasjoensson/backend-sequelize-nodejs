@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const db = require("../models/sequelize"); // Import your Sequelize models
 const { initializeNeo4jDriver } = require("../config/neo4j.config");
+require("dotenv").config();
 const MongoCustomer = require("../models/mongodb/customer.model");
 const Customer = db.Customer;
 const Role = db.Role;
@@ -122,7 +123,7 @@ const authenticateToken = async (req, res, next) => {
   const token = authHeader.split(" ")[1]; // Get the token from the Authorization header
 
   try {
-    const decoded = jwt.verify(token, "your-secret-key"); // Verify and decode the token using your secret key
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify and decode the token using your secret key
 
     let user;
     console.log("selectedDatabase", selectedDatabase);

@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { initializeNeo4jDriver } = require("../../config/neo4j.config");
+require("dotenv").config();
 
 const loginNeo4j = async (email, password) => {
   let driver;
@@ -41,7 +42,7 @@ const loginNeo4j = async (email, password) => {
         Email: customer.email, // Modify based on your node property name for email
         // Add other necessary fields for the token
       },
-      "your-secret-key", // Replace with your secret key for token generation
+      process.env.JWT_SECRET, // Replace with your secret key for token generation
       { expiresIn: "1h" } // Set token expiration time
     );
 
