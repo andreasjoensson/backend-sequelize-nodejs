@@ -1,25 +1,67 @@
 const { initializeNeo4jDriver } = require("../../config/neo4j.config");
 
-// Create Rental Node
 const createRentalNJ = async (rentalData) => {
   let driver;
 
   try {
     driver = await initializeNeo4jDriver();
     const session = driver.session();
-    const result = await session.writeTransaction(async (txc) => {
-      const query = `
-        CREATE (r:Rental $rentalData)
-        RETURN r
-      `;
-      return await txc.run(query, { rentalData });
-    });
 
-    return result.records[0].get("r").properties;
+    const carId = parseInt(rentalData.CarID); // Assuming these are Neo4j's internal IDs
+    const customerId = parseInt(rentalData.CustomerID);
+    const locationId = parseInt(rentalData.LocationID);
+
+    // Create the Rental node
+    let createRentalQuery = `
+      CREATE (r:Rental $rentalData)
+      RETURN r
+    `;
+    let rentalResult = await session.writeTransaction(txc =>
+      txc.run(createRentalQuery, { rentalData })
+    );
+    let rentalNode = rentalResult.records[0].get('r');
+
+    // Create relationships in separate transactions
+    const createRelationships = async (relationshipQuery) => {
+      console.log('rentalId', rentalNode.identity)
+      return await session.writeTransaction(txc => txc.run(relationshipQuery, {
+        carId, customerId, locationId, rentalId: rentalNode.identity
+      }));
+    };
+
+    await createRelationships(`
+      MATCH (r:Rental), (c:Car)
+      WHERE ID(r) = $rentalId AND ID(c) = $carId
+      CREATE (r)-[:RENTED_CAR]->(c)
+    `);
+
+    await createRelationships(`
+      MATCH (r:Rental), (cust:Customer)
+      WHERE ID(r) = $rentalId AND ID(cust) = $customerId
+      CREATE (r)-[:RENTED_BY]->(cust)
+    `);
+
+    await createRelationships(`
+      MATCH (r:Rental), (loc:Location)
+      WHERE ID(r) = $rentalId AND ID(loc) = $locationId
+      CREATE (r)-[:RENTED_AT]->(loc)
+    `);
+
+    console.log('Rental creation result:', rentalNode);
+
+    return rentalNode.properties;
   } catch (error) {
-    throw new Error(`Error creating Rental: ${error.message}`);
+    console.log('Error:', error)
+    throw new Error(`Error creating Rental with associations: ${error.message}`);
+  } finally {
+    if (driver) {
+      await driver.close(); // Close the Neo4j driver
+    }
   }
 };
+
+
+
 
 // Get all Rentals
 const getAllRentalsNJ = async () => {
