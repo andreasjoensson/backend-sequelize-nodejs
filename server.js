@@ -1,5 +1,7 @@
 const express = require("express");
 const cors = require("cors");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 const { connect } = require("./config/mongodb.config");
 
 const app = express();
@@ -27,6 +29,41 @@ app.use(express.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
+
+const options = {
+  definition: {
+    openapi: "3.1.0",
+    info: {
+      title: "Bilopedia 3 Databaser API",
+      version: "0.1.0",
+      description:
+        "Det her er en simpel biludlejnings API, som er lavet til at demonstrere forskellige databaser.",
+      license: {
+        name: "MIT",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
+      contact: {
+        name: "Bilopedia",
+        url: "https://bilopedia.dk",
+        email: "andreas.ecuador@live.dk",
+      },
+    },
+    servers: [
+      {
+        url: "https://crud-backend-my25.onrender.com",
+        url: "http://localhost:8080",
+      },
+    ],
+  },
+  apis: ["./routes/*.js"],
+};
+
+const specs = swaggerJsdoc(options);
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs)
+);
 
 const db = require("./models/sequelize");
 
