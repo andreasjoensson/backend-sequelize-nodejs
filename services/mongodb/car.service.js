@@ -1,8 +1,34 @@
 const Car = require("../../models/mongodb/cars.model");
+const MaintenanceRecord = require("../../models/mongodb/maintenancerecord");
+const InsurancePolicy = require("../../models/mongodb/insurancepolicy");
+const Accessory = require("../../models/mongodb/accessory.model");
+const TrafficViolation = require("../../models/mongodb/trafficviolation");
 
 exports.createCarMG = async (carData) => {
   try {
-    const newCar = await Car.create(carData);
+    // Destructure with the keys matching the request's case
+    const { Accessories, InsurancePolicy: insurancePolicyData, MaintenanceRecords, TrafficViolations, ...carInfo } = carData;
+
+    // Create the car
+    const newCar = await Car.create(carInfo);
+
+    // Create associated documents
+    if (Accessories) {
+      await Promise.all(Accessories.map(acc => Accessory.create({ ...acc, CarID: newCar._id })));
+    }
+
+    if (insurancePolicyData) {
+      await InsurancePolicy.create({ ...insurancePolicyData, CarID: newCar._id });
+    }
+
+    if (MaintenanceRecords) {
+      await Promise.all(MaintenanceRecords.map(record => MaintenanceRecord.create({ ...record, CarID: newCar._id })));
+    }
+
+    if (TrafficViolations) {
+      await Promise.all(TrafficViolations.map(violation => TrafficViolation.create({ ...violation, CarID: newCar._id })));
+    }
+
     return newCar;
   } catch (error) {
     throw new Error(`Error creating car: ${error.message}`);
