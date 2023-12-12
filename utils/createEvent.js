@@ -1,0 +1,7 @@
+/*
+CREATE EVENT `MonthlyDataCleanup`
+ON SCHEDULE EVERY 1 MONTH
+DO
+    DELETE FROM rentals WHERE ReturnDate < NOW() - INTERVAL 1 YEAR;
+
+*/

@@ -1,12 +1,65 @@
 const db = require("../../models/sequelize"); // Import your Sequelize models
 const Car = db.Car;
+const MaintenanceRecords = db.MaintenanceRecord;
+const InsurancePolicies = db.InsurancePolicy;
+const Accessories = db.Accessory;
+const TrafficViolations = db.TrafficViolation;
+
 
 exports.createCarSQ = async (carData) => {
+  const { 
+    Accessories: accessoriesData, 
+    InsurancePolicy: insurancePolicyData,
+    MaintenanceRecords: maintenanceRecordsData, 
+    TrafficViolations: trafficViolationsData,
+    ...carInfo 
+  } = carData;
+
   try {
-    const newCar = await Car.create(carData);
+    // Start a transaction
+    const transaction = await db.sequelize.transaction();
+
+    // Create the car
+    const newCar = await Car.create(carInfo, { transaction });
+
+    // Create associated records
+    if (accessoriesData && accessoriesData.length) {
+      await Promise.all(
+        accessoriesData.map(accessory =>
+          Accessories.create({ ...accessory, CarID: newCar.CarID }, { transaction })
+        )
+      );
+    }
+
+    if (insurancePolicyData) {
+      await InsurancePolicies.create({ ...insurancePolicyData, CarID: newCar.CarID }, { transaction });
+    }
+
+    if (maintenanceRecordsData && maintenanceRecordsData.length) {
+      await Promise.all(
+        maintenanceRecordsData.map(record =>
+          MaintenanceRecords.create({ ...record, CarID: newCar.CarID }, { transaction })
+        )
+      );
+    }
+
+    if (trafficViolationsData && trafficViolationsData.length) {
+      await Promise.all(
+        trafficViolationsData.map(violation =>
+          TrafficViolations.create({ ...violation, CarID: newCar.CarID }, { transaction })
+        )
+      );
+    }
+
+    // Commit the transaction
+    await transaction.commit();
+
     return newCar;
   } catch (error) {
-    throw new Error(`Error creating car: ${error.message}`);
+    // Rollback the transaction in case of error
+    console.log('error', error)
+    await transaction.rollback();
+    throw new Error(`Error creating car with associated records: ${error.message}`);
   }
 };
 

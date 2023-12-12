@@ -1,5 +1,6 @@
 const { DataTypes } = require("sequelize");
 
+
 module.exports = (sequelize, Sequelize) => {
   const Car = sequelize.define(
     "Car",
@@ -29,8 +30,30 @@ module.exports = (sequelize, Sequelize) => {
     {
       tableName: "cars",
       timestamps: false,
+      indexes: [
+        {
+          fields: ['Make', 'Model']
+        }
+      ]
     }
   );
+
+const MaintenanceRecords = require("./maintenancerecords.model")(sequelize, DataTypes);
+const InsurancePolicies = require("./insurancepolicies.model")(sequelize, DataTypes);
+const Accessories = require("./accesories.model")(sequelize, DataTypes);
+const TrafficViolations = require("./trafficviolations.model")(sequelize, DataTypes);
+
+  Car.hasMany(MaintenanceRecords, { foreignKey: 'CarID' });
+  Car.hasMany(InsurancePolicies, { foreignKey: 'CarID' });
+  Car.hasMany(Accessories, { foreignKey: 'CarID' });
+  Car.hasMany(TrafficViolations, { foreignKey: 'CarID' });
+
+
+  TrafficViolations.belongsTo(Car, { foreignKey: 'CarID' });
+  MaintenanceRecords.belongsTo(Car, { foreignKey: 'CarID' });
+  InsurancePolicies.belongsTo(Car, { foreignKey: 'CarID' });
+  Accessories.belongsTo(Car, { foreignKey: 'CarID' });
+
 
   return Car;
 };
