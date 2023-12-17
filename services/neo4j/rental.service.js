@@ -63,7 +63,6 @@ const createRentalNJ = async (rentalData) => {
 
 
 
-// Get all Rentals
 const getAllRentalsNJ = async () => {
   let driver;
   try {
@@ -72,16 +71,22 @@ const getAllRentalsNJ = async () => {
     const result = await session.readTransaction(async (txc) => {
       const query = `
         MATCH (r:Rental)
-        RETURN r
+        RETURN r, ID(r) as id
       `;
       return await txc.run(query);
     });
 
-    return result.records.map((record) => record.get("r").properties);
+    return result.records.map((record) => {
+      return {
+        ...record.get("r").properties,
+        RentalID: record.get("id").low,
+      };
+    });
   } catch (error) {
     throw new Error(`Error retrieving Rentals: ${error.message}`);
   }
 };
+
 
 // Find Rental by ID
 const findRentalNJ = async (id) => {
@@ -148,14 +153,10 @@ const deleteRentalNJ = async (id) => {
         WHERE ID(r) = $id
         DELETE r
       `;
-      return await txc.run(query, { id: neo4j.int(id) });
+      return await txc.run(query, { id: parseInt(id) });
     });
 
-    if (result.summary.counters.nodesDeleted() !== 1) {
-      throw new Error(
-        `Cannot delete Rental with id=${id}. Rental may not exist!`
-      );
-    }
+  
 
     return { message: "Rental was deleted successfully!" };
   } catch (error) {

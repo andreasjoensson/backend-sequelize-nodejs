@@ -70,7 +70,7 @@ const authenticateTokenNeo4j = async (decoded) => {
       `
       MATCH (u:Customer)-[:HAS_ROLE]->(role)
       WHERE ID(u) = $id
-      RETURN u, collect(role) as roles
+      RETURN u, collect(role) as roles, ID(u) as id
       `,
       { id: decoded.CustomerID }
     );
@@ -89,7 +89,7 @@ const authenticateTokenNeo4j = async (decoded) => {
     await session.close();
     await driver.close();
 
-    return { ...userData, roles };
+    return { ...userData, roles, id: decoded.CustomerID };
   } catch (err) {
     console.error(err);
     return err; // Forbidden if token is invalid or user not found

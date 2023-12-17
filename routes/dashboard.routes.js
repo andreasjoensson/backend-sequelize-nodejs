@@ -103,7 +103,7 @@ module.exports = (app) => {
   router.get(
     "/",
     authenticateToken,
-    checkRole(["ApplicationUser"]),
+    checkRole(["ApplicationUser", "DatabaseAdmin"]),
     dashboard.findInfo
   );
 

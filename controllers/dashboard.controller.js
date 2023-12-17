@@ -4,7 +4,7 @@ const GetCustomersWithCarsAndRentals = require("../services/sequelize/dashboard.
 
 // Find a single Car by ID
 exports.findInfo = async (req, res) => {
-    const id = req.params.id;
+    const id = req.user.id
     const selectedDatabase = req.headers["database-type"]; // Retrieve the 'Database-Type' header
   
     try {
@@ -23,6 +23,8 @@ exports.findInfo = async (req, res) => {
           // Handle default case
           break;
       }
+
+      console.log(result);
   
       if (!result) {
         return res.status(404).json({ message: `Car with id ${id} not found.` });

@@ -108,11 +108,15 @@ const getAllCarsNeo4j = async () => {
 
     const query = `
       MATCH (c:Car)
-      RETURN c
+      RETURN c, ID(c) as id
     `;
 
     const result = await session.run(query);
-    const allCars = result.records.map((record) => record.get("c").properties);
+    const allCars = result.records.map((record) => {
+      return {
+      ...record.get("c").properties,
+      CarID: record.get("id").low,
+    }});
     session.close();
 
     console.log("allCars", allCars);

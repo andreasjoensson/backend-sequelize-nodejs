@@ -33,13 +33,17 @@ const getAllLocationsNeo4j = async () => {
 
     const queryGetAllLocations = `
       MATCH (l:Location)
-      RETURN l
+      RETURN l, ID(l) as id
     `;
 
     const result = await session.run(queryGetAllLocations);
     const allLocations = result.records.map(
-      (record) => record.get("l").properties
-    );
+      (record) => {
+       return {
+        ...record.get("l").properties,
+        LocationID: record.get("id").low,
+       } 
+      });
 
     await session.close();
     await driver.close();
