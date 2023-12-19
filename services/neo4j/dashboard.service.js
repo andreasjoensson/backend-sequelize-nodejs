@@ -18,7 +18,6 @@ const getCustomersWithCarsAndRentalsNeo4j = async (customerId) => {
       RETURN cust
     `;
     const customerResult = await session.run(customerQuery, { customerId: customerId });
-    console.log('customerResult', customerResult.records)
     const customer = customerResult.records[0]?.get('cust').properties;
 
     // Hent udlejninger for kunden

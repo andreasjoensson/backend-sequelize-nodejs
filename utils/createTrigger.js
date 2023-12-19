@@ -8,11 +8,17 @@ CREATE TABLE audit_log (
 );
 
 
+DELIMITER $$
+
 CREATE TRIGGER `AfterRentalInsert`
-AFTER INSERT ON `rentals` FOR EACH ROW
+AFTER INSERT ON `rentals`
+FOR EACH ROW
 BEGIN
     INSERT INTO audit_log (action, description)
     VALUES ('INSERT', CONCAT('New rental added with ID ', NEW.RentalID));
-END;
+END $$
+
+DELIMITER ;
+
 
 */
